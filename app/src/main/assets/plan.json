@@ -21,20 +21,20 @@
   "dayTypes": {
     "DOUBLE": {
       "label": "Doppeltag",
-      "carbsPerKg": 6.506,
-      "proteinPerKg": 2.244,
+      "carbsPerKg": 6.6667,
+      "proteinPerKg": 2.0513,
       "fatPerKg": 0.705
     },
     "NORMAL": {
       "label": "Normaltag",
-      "carbsPerKg": 5.0,
-      "proteinPerKg": 2.244,
+      "carbsPerKg": 5.1923,
+      "proteinPerKg": 2.0513,
       "fatPerKg": 0.769
     },
     "REST": {
       "label": "Ruhetag",
-      "carbsPerKg": 3.269,
-      "proteinPerKg": 2.244,
+      "carbsPerKg": 3.4615,
+      "proteinPerKg": 2.0513,
       "fatPerKg": 0.833
     }
   },

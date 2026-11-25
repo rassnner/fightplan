@@ -10,17 +10,17 @@ class MacroCalculatorTest {
     @Test
     fun doubleDayAt78kg() {
         val m = MacroCalculator.forDay(78.0, plan.dayTypes.getValue("DOUBLE"))
-        assertEquals(507, m.carbsG)
-        assertEquals(175, m.proteinG)
+        assertEquals(520, m.carbsG)
+        assertEquals(160, m.proteinG)
         assertEquals(55, m.fatG)
-        assertEquals(3225, m.kcal)
+        assertEquals(3215, m.kcal)
     }
 
     @Test
     fun normalDayAt78kg() {
         val m = MacroCalculator.forDay(78.0, plan.dayTypes.getValue("NORMAL"))
-        assertEquals(390, m.carbsG)
-        assertEquals(175, m.proteinG)
+        assertEquals(405, m.carbsG)
+        assertEquals(160, m.proteinG)
         assertEquals(60, m.fatG)
         assertEquals(2800, m.kcal)
     }
@@ -28,8 +28,8 @@ class MacroCalculatorTest {
     @Test
     fun restDayAt78kg() {
         val m = MacroCalculator.forDay(78.0, plan.dayTypes.getValue("REST"))
-        assertEquals(255, m.carbsG)
-        assertEquals(175, m.proteinG)
+        assertEquals(270, m.carbsG)
+        assertEquals(160, m.proteinG)
         assertEquals(65, m.fatG)
         assertEquals(2305, m.kcal)
     }
@@ -37,14 +37,14 @@ class MacroCalculatorTest {
     @Test
     fun macrosScaleWithWeight() {
         val m = MacroCalculator.forDay(74.0, plan.dayTypes.getValue("DOUBLE"))
-        assertEquals(166, m.proteinG) // 2,244 × 74
-        assertEquals(481, m.carbsG)   // 6,506 × 74
+        assertEquals(152, m.proteinG) // 2,0513 × 74
+        assertEquals(493, m.carbsG)   // 6,6667 × 74
     }
 
     @Test
     fun weeklyAverage() {
         // 4 Doppeltage, 2 Normaltage, 1 Ruhetag
-        assertEquals((4 * 3225 + 2 * 2800 + 2305) / 7.0, MacroCalculator.weeklyAverageKcal(plan, 78.0), 1.0)
+        assertEquals((4 * 3215 + 2 * 2800 + 2305) / 7.0, MacroCalculator.weeklyAverageKcal(plan, 78.0), 1.0)
     }
 
     @Test
@@ -61,7 +61,7 @@ class MacroCalculatorTest {
         assertEquals(base.kcal - 150, minus.kcal)
         assertEquals(base.proteinG, minus.proteinG)
         assertEquals(base.fatG, minus.fatG)
-        assertEquals(390 - 37.5, minus.carbsG.toDouble(), 0.6)
+        assertEquals(405 - 37.5, minus.carbsG.toDouble(), 0.6)
     }
 
     @Test
