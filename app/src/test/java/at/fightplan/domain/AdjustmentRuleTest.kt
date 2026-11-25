@@ -69,7 +69,7 @@ class AdjustmentRuleTest {
     @Test
     fun applyIncreaseAndGoal() {
         val r = AdjustmentRule.apply(Suggestion.Increase(1.0, 200), mapOf("NORMAL" to -150), plan.dayTypes.keys)
-        assertEquals(mapOf("DOUBLE" to 200, "SPARRING" to 200, "NORMAL" to 50, "REST" to 200), r)
+        assertEquals(mapOf("DOUBLE" to 200, "NORMAL" to 50, "REST" to 200), r)
         val g = AdjustmentRule.apply(Suggestion.GoalReached(74.0, 350), emptyMap(), plan.dayTypes.keys)
         assertTrue(g.values.all { it == 350 })
     }

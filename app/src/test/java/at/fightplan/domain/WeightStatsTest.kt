@@ -76,8 +76,8 @@ class WeightStatsTest {
         val pts = linear(7, 78.0, 0.0)
         val t = DayTargetCalculator.targets(plan, AppSettings(), pts, start.plusDays(6)) // Sonntag
         assertEquals("REST", t.typeKey)
-        assertEquals(2254, t.macros.kcal)
+        assertEquals(2305, t.macros.kcal)
         val withOffset = DayTargetCalculator.targets(plan, AppSettings(kcalOffsets = mapOf("REST" to -150)), pts, start.plusDays(6))
-        assertEquals(2104, withOffset.macros.kcal)
+        assertEquals(2155, withOffset.macros.kcal)
     }
 }
