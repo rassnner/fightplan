@@ -1,5 +1,6 @@
 package at.fightplan.widget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -114,4 +115,10 @@ class TodayWidget : GlanceAppWidget() {
 
 class TodayWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = TodayWidget()
+
+    // Kommt beim Hinzufügen, nach Neustart und nach App-Updates: nächste Aktualisierung planen.
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        WidgetRefresh.scheduleNext(context, context.container.plan)
+    }
 }

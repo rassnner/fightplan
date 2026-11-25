@@ -46,8 +46,6 @@ private enum class Tab(val route: String, val label: String, val icon: ImageVect
     SETTINGS("settings", "Mehr", Icons.Filled.Settings),
 }
 
-private const val ROUTE_PERMISSIONS = "permissions"
-
 private val LightColors = lightColorScheme(
     primary = Color(0xFFB71C1C),
     secondary = Color(0xFF455A64),
@@ -65,7 +63,7 @@ fun FightPlanTheme(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun FightPlanRoot(requestedTab: String?, onTabConsumed: () -> Unit) {
+fun FightPlanRoot() {
     FightPlanTheme {
         val vm: MainViewModel = viewModel()
         val state by vm.state.collectAsStateWithLifecycle()
@@ -74,16 +72,9 @@ fun FightPlanRoot(requestedTab: String?, onTabConsumed: () -> Unit) {
 
         LifecycleResumeEffect(Unit) {
             vm.refreshDate()
-            vm.rescheduleAlarms()
             onPauseOrDispose { }
         }
         LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
-        LaunchedEffect(requestedTab) {
-            val tab = Tab.entries.firstOrNull { it.route == requestedTab } ?: return@LaunchedEffect
-            nav.navigate(tab.route) { popUpTo(nav.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true }
-            onTabConsumed()
-        }
-
         val backStack by nav.currentBackStackEntryAsState()
         val current = backStack?.destination?.route
 
@@ -117,15 +108,12 @@ fun FightPlanRoot(requestedTab: String?, onTabConsumed: () -> Unit) {
             }
             NavHost(nav, startDestination = Tab.TODAY.route, modifier = Modifier.padding(padding)) {
                 composable(Tab.TODAY.route) {
-                    TodayScreen(s, vm, onOpenPermissions = { nav.navigate(ROUTE_PERMISSIONS) })
+                    TodayScreen(s, vm)
                 }
                 composable(Tab.WEEK.route) { WeekScreen(s) }
                 composable(Tab.WEIGHT.route) { WeightScreen(s, vm) }
                 composable(Tab.CHECKIN.route) { CheckInScreen(s, vm) }
-                composable(Tab.SETTINGS.route) {
-                    SettingsScreen(s, vm, onOpenPermissions = { nav.navigate(ROUTE_PERMISSIONS) })
-                }
-                composable(ROUTE_PERMISSIONS) { PermissionsScreen(onBack = { nav.popBackStack() }) }
+                composable(Tab.SETTINGS.route) { SettingsScreen(s, vm) }
             }
         }
     }

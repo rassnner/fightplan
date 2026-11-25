@@ -10,8 +10,6 @@ class BackupCodecTest {
         settings = AppSettings(
             startWeightKg = 78.0,
             goalWeightKg = 74.0,
-            alarmTimeOverrides = mapOf("checkin" to "19:00"),
-            disabledAlarms = setOf("fix-di-bett"),
             kcalOffsets = mapOf("NORMAL" to -150, "REST" to -150),
             lastAdjustmentDecisionEpochDay = 20500,
             maintenanceApplied = false,
@@ -38,6 +36,15 @@ class BackupCodecTest {
         val empty = BackupData(exportedAt = "x", settings = AppSettings(), weights = emptyList(), waist = emptyList(),
             checkIns = emptyList(), mealChecks = emptyList())
         assertEquals(empty, BackupCodec.decode(BackupCodec.encode(empty)))
+    }
+
+    @Test
+    fun oldBackupWithAlarmFieldsStillImports() {
+        val old = BackupCodec.encode(sample).replace(
+            "\"kcalOffsets\"",
+            "\"alarmTimeOverrides\": {\"checkin\": \"19:00\"},\n        \"disabledAlarms\": [\"x\"],\n        \"kcalOffsets\"",
+        )
+        assertEquals(sample, BackupCodec.decode(old))
     }
 
     @Test(expected = IllegalArgumentException::class)

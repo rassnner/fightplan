@@ -17,28 +17,21 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import at.fightplan.domain.Format
 import at.fightplan.domain.Suggestion
 import java.time.DayOfWeek
 
 @Composable
-fun TodayScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit) {
-    val context = LocalContext.current
-    var permTick by remember { mutableIntStateOf(0) }
-    LifecycleResumeEffect(Unit) { permTick++; onPauseOrDispose { } }
-    val permissionsOk = remember(permTick) { Permissions.allGranted(context) }
+fun TodayScreen(s: AppState, vm: MainViewModel) {
     val day = s.plan.day(s.today.dayOfWeek)
 
     Column(
@@ -49,14 +42,6 @@ fun TodayScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(onClick = {}, label = { Text(s.targets.type.label) })
             s.average?.let { AssistChip(onClick = {}, label = { Text("Ø 7 Tage ${Format.kg(it)}") }) }
-        }
-
-        if (!permissionsOk) {
-            SectionCard(container = MaterialTheme.colorScheme.errorContainer) {
-                Text("Erinnerungen sind noch nicht zuverlässig", style = MaterialTheme.typography.titleMedium)
-                Text("Benachrichtigungen, exakte Alarme oder Akku-Ausnahme fehlen.")
-                Button(onClick = onOpenPermissions) { Text("Jetzt einrichten") }
-            }
         }
 
         WeightInputCard(s, vm)
@@ -84,7 +69,21 @@ fun TodayScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit) {
         SectionCard {
             Text("Termine", style = MaterialTheme.typography.titleMedium)
             day.school?.let { TimeLine("${it.start}–${it.end}", "Schule", null) }
-            day.sessions.sortedBy { it.start ?: "" }.forEach { TimeLine(it.timeText, it.title, it.content) }
+            day.sessions.sortedBy { it.start ?: "" }.forEach {
+                TimeLine(it.timeText, it.title, it.content + (it.note?.let { n -> " · $n" } ?: ""))
+            }
+        }
+
+        day.sessions.filter { it.hasDetails }.forEach { session ->
+            SectionCard {
+                Text(session.title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    session.timeText + (session.note?.let { " · $it" } ?: ""),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                SessionDetails(session)
+            }
         }
 
         SectionCard {

@@ -2,22 +2,17 @@ package at.fightplan.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,23 +21,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import at.fightplan.domain.AlarmDef
-import at.fightplan.domain.AlarmKind
-import at.fightplan.domain.AlarmPlanner
 import at.fightplan.domain.Format
 import at.fightplan.domain.MacroCalculator
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-private val HHMM = DateTimeFormatter.ofPattern("HH:mm")
 
 @Composable
-fun SettingsScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit) {
+fun SettingsScreen(s: AppState, vm: MainViewModel) {
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         uri?.let(vm::export)
     }
@@ -79,12 +65,6 @@ fun SettingsScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit
         }
 
         SectionCard {
-            Text("Berechtigungen", style = MaterialTheme.typography.titleMedium)
-            Text("Benachrichtigungen, exakte Alarme, Akku-Optimierung")
-            Button(onClick = onOpenPermissions) { Text("Prüfen") }
-        }
-
-        SectionCard {
             Text("Daten", style = MaterialTheme.typography.titleMedium)
             Text("Sicherung als JSON (Gewicht, Taille, Check-ins, Häkchen, Einstellungen).")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -92,8 +72,6 @@ fun SettingsScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit
                 OutlinedButton(onClick = { importConfirm = true }) { Text("Import") }
             }
         }
-
-        AlarmSettings(s, vm)
     }
 
     if (importConfirm) {
@@ -139,72 +117,4 @@ private fun WeightSettings(s: AppState, vm: MainViewModel) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
-}
-
-@Composable
-private fun AlarmSettings(s: AppState, vm: MainViewModel) {
-    val alarms = remember(s.plan) { AlarmPlanner.buildAlarms(s.plan) }
-    var editing by remember { mutableStateOf<AlarmDef?>(null) }
-    SectionCard {
-        Text("Alarme", style = MaterialTheme.typography.titleMedium)
-        Text(
-            "Tippe auf eine Zeit, um sie zu ändern. Schalter = an/aus.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        DayOfWeek.entries.forEach { day ->
-            HorizontalDivider()
-            Text(Format.dayLong(day), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 4.dp))
-            alarms.filter { it.day == day }.sortedBy { it.effectiveTime(s.settings) }.forEach { def ->
-                val time = def.effectiveTime(s.settings)
-                val changed = def.id in s.settings.alarmTimeOverrides
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        time.format(HHMM),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (changed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.width(64.dp).clickable { editing = def },
-                    )
-                    Column(Modifier.weight(1f).clickable { editing = def }) {
-                        Text(kindLabel(def.kind), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(
-                            if (def.kind == AlarmKind.MEAL) def.text else def.title + if (def.kind == AlarmKind.TRAINING) " (${def.text})" else "",
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                    Switch(
-                        checked = def.isEnabled(s.settings),
-                        onCheckedChange = { on ->
-                            vm.updateSettings {
-                                it.copy(disabledAlarms = if (on) it.disabledAlarms - def.id else it.disabledAlarms + def.id)
-                            }
-                        },
-                    )
-                }
-            }
-        }
-    }
-    editing?.let { def ->
-        TimePickDialog(
-            title = "${kindLabel(def.kind)} · ${Format.dayLong(def.day)}",
-            initial = def.effectiveTime(s.settings),
-            onDismiss = { editing = null },
-        ) { t ->
-            vm.updateSettings {
-                val overrides = if (t == def.defaultTime) it.alarmTimeOverrides - def.id
-                else it.alarmTimeOverrides + (def.id to t.format(HHMM))
-                it.copy(alarmTimeOverrides = overrides)
-            }
-        }
-    }
-}
-
-private fun kindLabel(k: AlarmKind) = when (k) {
-    AlarmKind.WEIGH_IN -> "Wiegen"
-    AlarmKind.MEAL -> "Essen (10 min vorher)"
-    AlarmKind.TRAINING -> "Training (45 min vorher)"
-    AlarmKind.FIXED -> "Schlaf"
-    AlarmKind.CHECK_IN -> "Check-in"
 }

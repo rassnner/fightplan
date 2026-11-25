@@ -1,6 +1,7 @@
 package at.fightplan.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +14,17 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import at.fightplan.domain.Format
+import at.fightplan.domain.Session
 import java.time.DayOfWeek
 
 private val ColDay = 76.dp
@@ -27,21 +33,22 @@ private val ColUnit = 120.dp
 private val ColContent = 240.dp
 private val ColMeals = 260.dp
 
-private data class WeekRow(val time: String, val unit: String, val content: String, val muted: Boolean)
+private data class WeekRow(val time: String, val unit: String, val content: String, val muted: Boolean, val session: Session? = null)
 
 @Composable
 fun WeekScreen(s: AppState) {
+    var open by remember { mutableStateOf<Session?>(null) }
     Column(Modifier.fillMaxSize().padding(top = 16.dp)) {
         Text("Wochenplan", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 16.dp))
         Text(
-            "Zum Scrollen seitlich wischen",
+            "Seitlich wischen für alle Spalten · Einheit antippen für Übungen",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         )
+        Column(Modifier.verticalScroll(rememberScrollState())) {
         Column(
             Modifier
-                .verticalScroll(rememberScrollState())
                 .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
@@ -53,8 +60,8 @@ fun WeekScreen(s: AppState) {
                 val day = s.plan.day(dow)
                 val rows = buildList {
                     day.school?.let { add(WeekRow("${it.start}–${it.end}", "Schule", "", true)) }
-                    day.sessions.forEach { add(WeekRow(it.timeText, it.title, it.content, false)) }
-                }.sortedBy { it.time }
+                    day.sessions.forEach { add(WeekRow(it.timeText, it.title, it.content, !it.training, it)) }
+                }.sortedBy { it.session?.start ?: if (it.session == null) it.time else "" }
                 val isToday = dow == s.today.dayOfWeek
                 HorizontalDivider()
                 Row(Modifier.background(if (isToday) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f) else Color.Transparent)) {
@@ -65,10 +72,11 @@ fun WeekScreen(s: AppState) {
                     Column {
                         rows.forEach { r ->
                             val color = if (r.muted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-                            Row {
+                            val clickable = r.session?.hasDetails == true
+                            Row(if (clickable) Modifier.clickable { open = r.session } else Modifier) {
                                 Cell(r.time, ColTime, color)
                                 Cell(r.unit, ColUnit, color, bold = !r.muted)
-                                Cell(r.content, ColContent, color)
+                                Cell(r.content + if (clickable) "  ›" else "", ColContent, color)
                             }
                         }
                     }
@@ -80,7 +88,10 @@ fun WeekScreen(s: AppState) {
                 }
             }
         }
+        Column(Modifier.padding(16.dp)) { GuidelinesCard(s.plan.guidelines) }
+        }
     }
+    open?.let { SessionDialog(it, onDismiss = { open = null }) }
 }
 
 @Composable

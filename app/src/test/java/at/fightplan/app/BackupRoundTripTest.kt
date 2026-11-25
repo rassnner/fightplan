@@ -32,8 +32,7 @@ class BackupRoundTripTest {
         dao.upsertCheckIn(CheckInEntity(20503, 7.5, 2, false, true, true, 48.0))
         dao.insertMealCheck(MealCheckEntity(20500, "mo-1"))
         c.settings.update {
-            it.copy(goalWeightKg = 73.5, alarmTimeOverrides = mapOf("checkin" to "19:15"),
-                disabledAlarms = setOf("fix-mi-licht"), kcalOffsets = mapOf("NORMAL" to -150))
+            it.copy(goalWeightKg = 73.5, kcalOffsets = mapOf("NORMAL" to -150), maintenanceApplied = true)
         }
         val before = c.backup.snapshot()
 

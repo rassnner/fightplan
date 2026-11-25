@@ -132,7 +132,6 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun updateSettings(transform: (AppSettings) -> AppSettings) = launchAndRefresh {
         c.settings.update(transform)
-        c.rescheduleAll()
     }
 
     fun export(uri: Uri) = viewModelScope.launch {
@@ -144,11 +143,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun import(uri: Uri) = launchAndRefresh {
         runCatching { c.backup.import(uri) }
             .onSuccess {
-                c.rescheduleAll()
                 _messages.tryEmit("Import: ${it.weights.size} Gewichte, ${it.checkIns.size} Check-ins")
             }
             .onFailure { _messages.tryEmit("Import fehlgeschlagen: ${it.message}") }
     }
-
-    fun rescheduleAlarms() = viewModelScope.launch { c.rescheduleAll() }
 }

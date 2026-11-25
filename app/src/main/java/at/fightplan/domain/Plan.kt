@@ -12,9 +12,8 @@ data class Plan(
     val defaults: PlanDefaults,
     val dayTypes: Map<String, DayType>,
     val days: List<DayPlan>,
-    val reminders: List<FixedReminder> = emptyList(),
-    val weighIn: WeighIn,
-    val checkIn: TimedEvent,
+    /** Allgemeine Trainingsregeln (Progression, Pausen, Deload ...). */
+    val guidelines: List<Guideline> = emptyList(),
 ) {
     fun day(dayOfWeek: DayOfWeek): DayPlan =
         days.firstOrNull { it.dayOfWeek == dayOfWeek }
@@ -39,7 +38,7 @@ data class Plan(
         defaults.rules.decreaseDayTypes.forEach {
             require(dayTypes.containsKey(it)) { "Tagestyp $it in rules.decreaseDayTypes fehlt" }
         }
-        val ids = days.flatMap { d -> d.sessions.map { it.id } + d.meals.map { it.id } } + reminders.map { it.id }
+        val ids = days.flatMap { d -> d.sessions.map { it.id } + d.meals.map { it.id } }
         require(ids.size == ids.toSet().size) { "IDs in plan.json müssen eindeutig sein" }
     }
 }
@@ -50,8 +49,6 @@ data class PlanDefaults(
     val goalWeightKg: Double,
     val targetLossMinKgPerWeek: Double,
     val targetLossMaxKgPerWeek: Double,
-    val mealReminderLeadMinutes: Int = 10,
-    val trainingReminderLeadMinutes: Int = 45,
     val maintenanceExtraKcal: Int = 350,
     val rules: AdjustmentConfig = AdjustmentConfig(),
 )
@@ -96,9 +93,19 @@ data class Session(
     val id: String,
     val start: String? = null,
     val end: String? = null,
+    /** Anzeige statt Uhrzeit, z. B. "morgens frei" oder "ganztags". */
+    val timeLabel: String? = null,
     val title: String,
+    /** Kurzbeschreibung / Fokus der Einheit. */
     val content: String,
+    /** Zusatz wie "fix" oder "Dusche bis 08:10". */
+    val note: String? = null,
     val training: Boolean = true,
+    val exercises: List<Exercise> = emptyList(),
+    /** Ablauf bei Ausdauer-Einheiten. */
+    val details: List<String> = emptyList(),
+    /** Hinweis am Ende der Einheit. */
+    val footer: String? = null,
 ) {
     val startTime: LocalTime? get() = start?.let(LocalTime::parse)
     val endTime: LocalTime? get() = end?.let(LocalTime::parse)
@@ -106,9 +113,22 @@ data class Session(
         get() = when {
             start != null && end != null -> "$start–$end"
             start != null -> start
-            else -> "ganztags"
+            else -> timeLabel ?: "ganztags"
         }
+    val hasDetails: Boolean get() = exercises.isNotEmpty() || details.isNotEmpty() || footer != null
 }
+
+@Serializable
+data class Exercise(
+    val name: String,
+    val sets: String,
+    val note: String? = null,
+    /** Double Progression. */
+    val dp: Boolean = false,
+)
+
+@Serializable
+data class Guideline(val title: String, val text: String)
 
 @Serializable
 data class Meal(
@@ -119,27 +139,4 @@ data class Meal(
 ) {
     val localTime: LocalTime? get() = time?.let(LocalTime::parse)
     val timeText: String get() = time ?: timeLabel ?: "–"
-}
-
-@Serializable
-data class FixedReminder(
-    val id: String,
-    val day: String,
-    val time: String,
-    val title: String,
-    val text: String,
-)
-
-@Serializable
-data class WeighIn(
-    val defaultTime: String,
-    val overrides: Map<String, String> = emptyMap(),
-) {
-    fun timeFor(day: DayOfWeek): LocalTime = LocalTime.parse(overrides[day.name] ?: defaultTime)
-}
-
-@Serializable
-data class TimedEvent(val day: String, val time: String) {
-    val dayOfWeek: DayOfWeek get() = DayOfWeek.valueOf(day)
-    val localTime: LocalTime get() = LocalTime.parse(time)
 }

@@ -1,17 +1,17 @@
 # FightPlan
 
-Android-App, die meinen Papier-Wochenplan fürs Muay-Thai-Training ersetzt: Tagesplan, Essensfenster, Makro-Ziele, Gewichtsverlauf, wöchentlicher Check-in und Erinnerungen. Alles bleibt lokal auf dem Handy, es gibt kein Backend und keinen Login.
+Android-App, die meinen Papier-Wochenplan fürs Muay-Thai-Training ersetzt: Trainingsplan mit Übungen, Essensfenster, Makro-Ziele, Gewichtsverlauf und wöchentlicher Check-in. Alles bleibt lokal auf dem Handy, es gibt kein Backend, keinen Login und keine Benachrichtigungen.
 
 ## Funktionen
 
-- **Heute:** Tagestyp, Termine, Essensfenster zum Abhaken, Makro-Ziele, Eingabe des Morgengewichts
-- **Woche:** Tabelle mit Schule, Training und Essen
+- **Heute:** Tagestyp, Termine, Übungen der heutigen Einheiten (Sätze × Wdh., Hinweise), Essensfenster zum Abhaken, Makro-Ziele, Eingabe des Morgengewichts
+- **Woche:** Tabelle mit Schule, Training und Essen; ein Tipp auf eine Einheit zeigt ihre Übungen, darunter stehen die Regeln zu Progression und Steuerung (Double Progression, Pausen, Deload, Notbremse)
 - **Gewicht:** Diagramm mit Tageswerten und 7-Tage-Schnitt, Verlust pro Woche, Taillenumfang, Anpassungsvorschläge
 - **Check-in:** Schlaf, Stimmung, Libido, Infekt, Kraft, Sprunghöhe; ab 2 Warnzeichen erscheint ein roter Hinweis
-- **Mehr:** Start- und Zielgewicht, alle Alarmzeiten (einzeln änderbar und abschaltbar), Berechtigungen, JSON-Export und -Import
+- **Mehr:** Start- und Zielgewicht, Makro-Anpassungen, JSON-Export und -Import
 - **Widget „FightPlan Heute“ (4×2):** Tagestyp, nächster Termin, nächstes Essen, Makros
 
-Der Plan (Termine, Essen, Makro-Faktoren, Anpassungsregeln) steht in `app/src/main/assets/plan.json`. Wenn sich der Plan ändert, reicht es, diese Datei zu bearbeiten und die App neu zu bauen.
+Der Plan (Einheiten mit Übungen, Essen, Makro-Faktoren, Anpassungsregeln, Trainingsregeln) steht in `app/src/main/assets/plan.json`. Wenn sich der Plan ändert, reicht es, diese Datei zu bearbeiten und die App neu zu bauen.
 
 ## Rechenlogik
 
@@ -46,19 +46,9 @@ Tests (Rechenlogik, Export/Import-Roundtrip, Robolectric-Smoke-Test der App):
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## Nötige Berechtigungen
+## Berechtigungen
 
-Beim ersten Start zeigt „Heute“ einen roten Hinweis. Über **Jetzt einrichten** (oder **Mehr → Berechtigungen → Prüfen**) lässt sich alles freigeben:
-
-| Berechtigung | Warum | Wo |
-|---|---|---|
-| Benachrichtigungen | Ab Android 13 nötig, sonst erscheinen keine Erinnerungen | Dialog in der App |
-| Exakte Alarme („Wecker und Erinnerungen“) | Ab Android 14 standardmäßig aus. Ohne diese Freigabe kann Android Erinnerungen um mehrere Minuten verschieben | Einstellungen → Apps → FightPlan → Wecker und Erinnerungen |
-| Akku-Optimierung: „Nicht eingeschränkt“ | Sonst beenden manche Hersteller die App im Hintergrund | Einstellungen → Apps → FightPlan → Akku |
-
-Bei **Xiaomi/HyperOS** muss zusätzlich „Autostart“ erlaubt sein, bei **Samsung** darf FightPlan nicht unter „Apps im Ruhezustand“ stehen. Hinweise für weitere Hersteller gibt es auf <https://dontkillmyapp.com>.
-
-Nach einem Neustart, einem App-Update oder einer Zeitzonenänderung plant die App alle Alarme automatisch neu (`BootReceiver`).
+Die App braucht keine. Das Widget aktualisiert sich still über einen ungenauen Systemtimer zu jeder Termin- und Essenszeit und um 00:05. Dabei kommt keine Benachrichtigung, und das Handy wird nicht geweckt.
 
 ## Datensicherung
 

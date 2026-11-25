@@ -5,145 +5,490 @@
     "goalWeightKg": 74.0,
     "targetLossMinKgPerWeek": 0.4,
     "targetLossMaxKgPerWeek": 0.6,
-    "mealReminderLeadMinutes": 10,
-    "trainingReminderLeadMinutes": 45,
     "maintenanceExtraKcal": 350,
     "rules": {
       "slowLossThresholdKg": 0.3,
       "fastLossThresholdKg": 0.8,
       "decreaseKcal": 150,
-      "decreaseDayTypes": ["NORMAL", "REST"],
+      "decreaseDayTypes": [
+        "NORMAL",
+        "REST"
+      ],
       "increaseKcal": 200,
       "compareWeeks": 2
     }
   },
   "dayTypes": {
-    "DOUBLE":   { "label": "Doppeltag", "carbsPerKg": 5.5, "proteinPerKg": 2.2, "fatPerKg": 0.8 },
-    "SPARRING": { "label": "Sparring",  "carbsPerKg": 5.0, "proteinPerKg": 2.2, "fatPerKg": 0.8 },
-    "NORMAL":   { "label": "Normal",    "carbsPerKg": 4.5, "proteinPerKg": 2.2, "fatPerKg": 0.8 },
-    "REST":     { "label": "Ruhe",      "carbsPerKg": 3.0, "proteinPerKg": 2.2, "fatPerKg": 0.9 }
+    "DOUBLE": {
+      "label": "Doppeltag",
+      "carbsPerKg": 5.5,
+      "proteinPerKg": 2.2,
+      "fatPerKg": 0.8
+    },
+    "SPARRING": {
+      "label": "Sparring",
+      "carbsPerKg": 5.0,
+      "proteinPerKg": 2.2,
+      "fatPerKg": 0.8
+    },
+    "NORMAL": {
+      "label": "Normal",
+      "carbsPerKg": 4.5,
+      "proteinPerKg": 2.2,
+      "fatPerKg": 0.8
+    },
+    "REST": {
+      "label": "Ruhe",
+      "carbsPerKg": 3.0,
+      "proteinPerKg": 2.2,
+      "fatPerKg": 0.9
+    }
   },
   "days": [
     {
       "day": "MONDAY",
       "type": "DOUBLE",
-      "school": { "start": "08:50", "end": "13:25" },
+      "school": {
+        "start": "08:50",
+        "end": "13:25"
+      },
       "sessions": [
         {
-          "id": "mo-kraft-a",
-          "start": "07:00",
+          "id": "mo-kraft",
+          "start": "06:50",
           "end": "07:50",
-          "title": "Kraft A",
-          "content": "Box Jump 3×4, Front Squat 3×4 (2 Wdh. Reserve), DB-Bankdrücken 3×6, Bulgarian Split Squat 3×6/Seite, Ab-Wheel 3×10, Nacken-Isometrie"
+          "title": "Kraft: Full Body 2",
+          "note": "Dusche bis 08:10",
+          "content": "Schwere Kniebeugen, Kreuzheben, Schrägbank, Klimmzüge",
+          "exercises": [
+            {
+              "name": "Knee Prehab Band-Zirkel (Side Steps, Knee Extensions, Ausfallschritte)",
+              "sets": "2 Runden × 15–20",
+              "note": "Zirkel ohne lange Pause"
+            },
+            {
+              "name": "Box Jumps",
+              "sets": "3×5",
+              "note": "Max Effort, Box schrittweise erhöhen"
+            },
+            {
+              "name": "Back Squat oder SSB Squat",
+              "sets": "3×5–7",
+              "note": "Primäre Beinübung",
+              "dp": true
+            },
+            {
+              "name": "Schrägbankdrücken (Langhantel oder Kurzhantel)",
+              "sets": "2×5–7",
+              "note": "Oberkörper Push",
+              "dp": true
+            },
+            {
+              "name": "Kreuzheben (Conventional oder Trap Bar)",
+              "sets": "1×5",
+              "note": "Nur 1 schwerer Top-Satz",
+              "dp": true
+            },
+            {
+              "name": "Klimmzüge (fester Griff nach Wahl)",
+              "sets": "2×5–7",
+              "note": "Vertikaler Zug",
+              "dp": true
+            },
+            {
+              "name": "Schulterdrücken (Maschine oder Kurzhantel)",
+              "sets": "2×8–10",
+              "note": "Vertikaler Push",
+              "dp": true
+            },
+            {
+              "name": "Superset: Leg Extensions / Leg Curls",
+              "sets": "2×8–10",
+              "note": "Zügig im Wechsel",
+              "dp": true
+            },
+            {
+              "name": "Superset: Leg Raises / Farmer Carries",
+              "sets": "2×8–10 / 2×1 min",
+              "note": "Carries jeweils 1 min halten",
+              "dp": true
+            }
+          ],
+          "footer": "Optional: 2 Sätze Nacken-Isometrie (15–20 s gegen Widerstand halten, alle 4 Richtungen)."
         },
-        { "id": "mo-mt", "start": "18:00", "end": "19:30", "title": "Muay Thai / K1", "content": "Verein" }
+        {
+          "id": "mo-mt",
+          "start": "18:00",
+          "end": "19:30",
+          "title": "Muay Thai / K1",
+          "content": "Vereinstraining",
+          "note": "fix"
+        }
       ],
       "meals": [
-        { "id": "mo-1", "time": "06:15", "content": "Banane mit Honig und 500 ml Wasser mit Salz" },
-        { "id": "mo-2", "time": "08:15", "content": "Nach Kraft A: Skyr oder Shake plus 70 g Kohlenhydrate" },
-        { "id": "mo-3", "time": "13:45", "content": "Reis und mageres Fleisch" },
-        { "id": "mo-4", "time": "16:00", "content": "Reiswaffeln mit Honig und Skyr" },
-        { "id": "mo-5", "time": "20:00", "content": "Reis oder Kartoffeln, Huhn oder Thunfisch, wenig Öl" }
+        {
+          "id": "mo-1",
+          "time": "06:15",
+          "content": "Banane mit Honig und 500 ml Wasser mit Salz"
+        },
+        {
+          "id": "mo-2",
+          "time": "08:15",
+          "content": "Nach dem Krafttraining: Skyr oder Shake plus 70 g Kohlenhydrate"
+        },
+        {
+          "id": "mo-3",
+          "time": "13:45",
+          "content": "Reis und mageres Fleisch"
+        },
+        {
+          "id": "mo-4",
+          "time": "16:00",
+          "content": "Reiswaffeln mit Honig und Skyr"
+        },
+        {
+          "id": "mo-5",
+          "time": "20:00",
+          "content": "Reis oder Kartoffeln, Huhn oder Thunfisch, wenig Öl"
+        }
       ]
     },
     {
       "day": "TUESDAY",
       "type": "NORMAL",
-      "school": { "start": "08:50", "end": "14:15" },
+      "school": {
+        "start": "08:50",
+        "end": "14:15"
+      },
       "sessions": [
-        { "id": "di-mt", "start": "19:30", "end": "21:00", "title": "Muay Thai / K1", "content": "Verein, danach Bett spätestens 22:45" }
+        {
+          "id": "di-z2",
+          "start": "07:00",
+          "end": "07:45",
+          "title": "Zone 2 Ausdauer",
+          "note": "Dusche bis 08:10",
+          "content": "40–45 min locker bei 135–150 bpm (Laufen oder Rad/Erg)",
+          "details": [
+            "Lockeres Laufen oder Rad/Ergometer bei konstant 135–150 bpm.",
+            "Du solltest noch ruhig durch die Nase atmen bzw. ganze Sätze sprechen können.",
+            "Dient gleichzeitig als aktive Regeneration nach Montag."
+          ]
+        },
+        {
+          "id": "di-mt",
+          "start": "19:30",
+          "end": "21:00",
+          "title": "Muay Thai / K1",
+          "content": "Vereinstraining",
+          "note": "fix"
+        }
       ],
       "meals": [
-        { "id": "di-1", "time": "14:30", "content": "Großes fettarmes Mittagessen" },
-        { "id": "di-2", "time": "16:45", "content": "Reis mit Huhn" },
-        { "id": "di-3", "time": "18:45", "content": "Kleiner Kohlenhydrat-Snack" },
-        { "id": "di-4", "time": "21:15", "content": "Skyr oder Magertopfen mit Honig und Reiswaffeln" }
+        {
+          "id": "di-1",
+          "time": "14:30",
+          "content": "Großes fettarmes Mittagessen"
+        },
+        {
+          "id": "di-2",
+          "time": "16:45",
+          "content": "Reis mit Huhn"
+        },
+        {
+          "id": "di-3",
+          "time": "18:45",
+          "content": "Kleiner Kohlenhydrat-Snack"
+        },
+        {
+          "id": "di-4",
+          "time": "21:15",
+          "content": "Skyr oder Magertopfen mit Honig und Reiswaffeln"
+        }
       ]
     },
     {
       "day": "WEDNESDAY",
       "type": "NORMAL",
-      "school": { "start": "08:00", "end": "15:15" },
+      "school": {
+        "start": "08:00",
+        "end": "15:15"
+      },
       "sessions": [
-        { "id": "mi-mt", "start": "18:00", "end": "19:30", "title": "Muay Thai / K1", "content": "Verein, Licht aus 22:00" }
+        {
+          "id": "mi-schlaf",
+          "timeLabel": "morgens frei",
+          "title": "Schlaf-Schutz",
+          "content": "Ausschlafen nach spätem Dienstag; nachmittags optional 20 min Nap",
+          "training": false
+        },
+        {
+          "id": "mi-mt",
+          "start": "18:00",
+          "end": "19:30",
+          "title": "Muay Thai / K1",
+          "content": "Vereinstraining",
+          "note": "fix, spätestens 21:45–22:00 schlafen"
+        }
       ],
       "meals": [
-        { "id": "mi-1", "time": "06:30", "content": "Frühstück" },
-        { "id": "mi-2", "timeLabel": "Pause", "content": "Wrap oder Hüttenkäse" },
-        { "id": "mi-3", "time": "15:45", "content": "Buchweizen oder Kartoffeln mit Huhn" },
-        { "id": "mi-4", "time": "17:15", "content": "Banane oder Reiswaffeln" },
-        { "id": "mi-5", "time": "20:00", "content": "Kartoffeln oder Reis mit magerem Protein plus Eier oder Lachs" }
+        {
+          "id": "mi-1",
+          "time": "06:30",
+          "content": "Frühstück"
+        },
+        {
+          "id": "mi-2",
+          "timeLabel": "Pause",
+          "content": "Wrap oder Hüttenkäse"
+        },
+        {
+          "id": "mi-3",
+          "time": "15:45",
+          "content": "Buchweizen oder Kartoffeln mit Huhn"
+        },
+        {
+          "id": "mi-4",
+          "time": "17:15",
+          "content": "Banane oder Reiswaffeln"
+        },
+        {
+          "id": "mi-5",
+          "time": "20:00",
+          "content": "Kartoffeln oder Reis mit magerem Protein plus Eier oder Lachs"
+        }
       ]
     },
     {
       "day": "THURSDAY",
       "type": "NORMAL",
-      "school": { "start": "08:00", "end": "14:00" },
+      "school": {
+        "start": "08:00",
+        "end": "14:00"
+      },
       "sessions": [
         {
-          "id": "do-kraft-b",
+          "id": "do-sprints",
+          "start": "06:35",
+          "end": "07:05",
+          "title": "Alaktazid-Sprints",
+          "note": "Dusche bis 07:20",
+          "content": "6–8 × 6–8 s All-Out (Treppe/Berg/Airbike) mit 60–90 s Pause",
+          "details": [
+            "10 min Warm-up: locker einlaufen/einfahren + 3 Steigerungen.",
+            "Woche 1–2: 6 × 6–8 s All-Out, ab Woche 3: 8 × 6–8 s All-Out (Treppe, steiler Berg oder Airbike).",
+            "60–90 s komplette Pause zwischen den Sprints.",
+            "3 min Cool-down.",
+            "Sobald die Beine brennen, waren die Intervalle zu lang oder die Pausen zu kurz."
+          ]
+        },
+        {
+          "id": "do-kraft",
           "start": "15:30",
           "end": "16:30",
-          "title": "Kraft B",
-          "content": "Med-Ball-Rotation 2×5/Seite, leichtes RDL 3×6 (3 Wdh. Reserve), gewichtete neutrale Klimmzüge 4×5, Landmine Press 3×6, Face Pulls 2×12–15, Copenhagen Plank 2×20 s/Seite, Nacken"
+          "title": "Kraft: Full Body 1",
+          "content": "Explosiv, Bankdrücken, Squat-Maschine, Pendlay Rows, Core",
+          "exercises": [
+            {
+              "name": "Cable Facepulls (Schulter-Prehab)",
+              "sets": "2–3×15–20",
+              "note": "Kontrolliert, leicht"
+            },
+            {
+              "name": "Pogo Jumps",
+              "sets": "3×15",
+              "note": "Kurzer Bodenkontakt, höher springen"
+            },
+            {
+              "name": "Push Press, Power Cleans oder Medizinball Slams",
+              "sets": "3×3",
+              "note": "Schweres Gewicht maximal explosiv",
+              "dp": true
+            },
+            {
+              "name": "Bankdrücken oder Weighted Push-ups",
+              "sets": "2×5–7",
+              "note": "Horizontaler Push",
+              "dp": true
+            },
+            {
+              "name": "Belt Squat oder Hack Squat",
+              "sets": "2×5–7",
+              "note": "Entlastet den unteren Rücken",
+              "dp": true
+            },
+            {
+              "name": "Pendlay Rows",
+              "sets": "2×5–7",
+              "note": "Horizontaler Zug",
+              "dp": true
+            },
+            {
+              "name": "Back Extensions oder Dumbbell RDLs",
+              "sets": "2×8–10",
+              "note": "Hintere Oberschenkel / Rückenstrecker",
+              "dp": true
+            },
+            {
+              "name": "Superset: Bicep Curl / Tricep Extension",
+              "sets": "2×8–10",
+              "note": "Zügig im Wechsel",
+              "dp": true
+            },
+            {
+              "name": "Superset: Cable Rotations / Plate Flips",
+              "sets": "2×8–10",
+              "note": "Rotation & Griffkraft",
+              "dp": true
+            }
+          ],
+          "footer": "Optional: 2 Sätze Nacken-Isometrie (15–20 s gegen Widerstand halten, alle 4 Richtungen)."
         }
       ],
       "meals": [
-        { "id": "do-1", "time": "14:15", "content": "Reis mit Huhn" },
-        { "id": "do-2", "time": "16:40", "content": "Topfen oder Casein mit Reiswaffeln" },
-        { "id": "do-3", "time": "19:30", "content": "Reis oder Kartoffeln mit magerem Fleisch" }
+        {
+          "id": "do-1",
+          "time": "14:15",
+          "content": "Reis mit Huhn"
+        },
+        {
+          "id": "do-2",
+          "time": "16:40",
+          "content": "Topfen oder Casein mit Reiswaffeln"
+        },
+        {
+          "id": "do-3",
+          "time": "19:30",
+          "content": "Reis oder Kartoffeln mit magerem Fleisch"
+        }
       ]
     },
     {
       "day": "FRIDAY",
       "type": "SPARRING",
-      "school": { "start": "08:00", "end": "15:15" },
+      "school": {
+        "start": "08:00",
+        "end": "15:15"
+      },
       "sessions": [
-        { "id": "fr-sparring", "start": "17:30", "end": "18:30", "title": "Sparring", "content": "Verein, kein Heben, kein Laufen" }
+        {
+          "id": "fr-frei",
+          "timeLabel": "morgens frei",
+          "title": "Frische Beine",
+          "content": "Kein Frühtraining, Erholung fürs Sparring",
+          "training": false
+        },
+        {
+          "id": "fr-sparring",
+          "start": "17:30",
+          "end": "18:30",
+          "title": "Sparring",
+          "content": "Vereins-Sparring",
+          "note": "fix"
+        }
       ],
       "meals": [
-        { "id": "fr-1", "time": "15:30", "content": "Reis oder Grieß mit Skyr, fettarm und ballaststoffarm" },
-        { "id": "fr-2", "time": "19:15", "content": "Großes Abendessen" }
+        {
+          "id": "fr-1",
+          "time": "15:30",
+          "content": "Reis oder Grieß mit Skyr, fettarm und ballaststoffarm"
+        },
+        {
+          "id": "fr-2",
+          "time": "19:15",
+          "content": "Großes Abendessen"
+        }
       ]
     },
     {
       "day": "SATURDAY",
       "type": "DOUBLE",
       "sessions": [
-        { "id": "sa-box", "start": "09:30", "end": "10:30", "title": "Boxen", "content": "Verein" },
         {
-          "id": "sa-power",
+          "id": "sa-box",
+          "start": "09:30",
+          "end": "10:30",
+          "title": "Boxen",
+          "content": "Vereins-Boxen",
+          "note": "fix"
+        },
+        {
+          "id": "sa-hiit",
           "start": "14:30",
           "end": "15:10",
-          "title": "Power und Sprints",
-          "content": "Sprünge 3×5, Med-Ball-Slams 3×6, 6×8 s Sprints (90 s Pause), Nacken"
+          "title": "HIIT / VO2max",
+          "note": "≥4 h Pause nach dem Boxen",
+          "content": "4×4 min @ >90 % HFmax (2 min locker) oder 30 s hart / 30 s locker",
+          "details": [
+            "10 min Warm-up.",
+            "4×4 min @ >90 % HFmax mit 2 min lockerem Gehen/Traben – oder 8–12 Runden 30 s hart / 30 s locker.",
+            "5 min Cool-down."
+          ]
         }
       ],
       "meals": [
-        { "id": "sa-1", "time": "08:00", "content": "Grießbrei oder Hafer mit Protein" },
-        { "id": "sa-2", "time": "11:15", "content": "Reis oder Kartoffeln mit Huhn oder Fisch" },
-        { "id": "sa-3", "time": "15:30", "content": "Shake oder Skyr mit Banane" },
-        { "id": "sa-4", "time": "19:00", "content": "Reichhaltiges, fettarmes Abendessen" }
+        {
+          "id": "sa-1",
+          "time": "08:00",
+          "content": "Grießbrei oder Hafer mit Protein"
+        },
+        {
+          "id": "sa-2",
+          "time": "11:15",
+          "content": "Reis oder Kartoffeln mit Huhn oder Fisch"
+        },
+        {
+          "id": "sa-3",
+          "time": "15:30",
+          "content": "Shake oder Skyr mit Banane"
+        },
+        {
+          "id": "sa-4",
+          "time": "19:00",
+          "content": "Reichhaltiges, fettarmes Abendessen"
+        }
       ]
     },
     {
       "day": "SUNDAY",
       "type": "REST",
       "sessions": [
-        { "id": "so-ruhe", "title": "Ruhetag", "content": "Optional 30 min locker gehen oder Zone 2, 10 min Mobility", "training": false }
+        {
+          "id": "so-ruhe",
+          "timeLabel": "ganztags",
+          "title": "Ruhetag",
+          "content": "Komplette Pause; optional 20–30 min spazieren + 10 min Mobility",
+          "training": false
+        }
       ],
       "meals": [
-        { "id": "so-1", "timeLabel": "ganztags", "content": "Sättigung durch Kartoffeln, Buchweizen, Magertopfen, Hüttenkäse; ganze Eier oder Lachs als Fettquelle" }
+        {
+          "id": "so-1",
+          "timeLabel": "ganztags",
+          "content": "Sättigung durch Kartoffeln, Buchweizen, Magertopfen, Hüttenkäse; ganze Eier oder Lachs als Fettquelle"
+        }
       ]
     }
   ],
-  "reminders": [
-    { "id": "di-bett", "day": "TUESDAY", "time": "22:15", "title": "Bett vorbereiten", "text": "Bett spätestens 22:45." },
-    { "id": "mi-licht", "day": "WEDNESDAY", "time": "21:45", "title": "Licht aus", "text": "Licht aus um 22:00." }
-  ],
-  "weighIn": {
-    "defaultTime": "06:15",
-    "overrides": { "MONDAY": "06:00" }
-  },
-  "checkIn": { "day": "SUNDAY", "time": "18:00" }
+  "guidelines": [
+    {
+      "title": "Double Progression (DP)",
+      "text": "Gewicht erst erhöhen, wenn du in allen Sätzen einer Übung die obere Wiederholungszahl sauber und explosiv schaffst (z. B. 7, 7, 7 bei 5–7 Wdh.). Immer 1–2 saubere Wiederholungen im Tank lassen (RIR 1–2) – im Defizit nie ans Muskelversagen."
+    },
+    {
+      "title": "Gewichtssprünge",
+      "text": "Oberkörper-Übungen +2,5 kg gesamt, Kniebeugen und Kreuzheben +2,5 bis 5 kg gesamt."
+    },
+    {
+      "title": "Satzpausen",
+      "text": "2,5–3 min bei schweren Grundübungen (Squats, Deadlift, Bankdrücken, Schrägbank, Rows, Klimmzüge), 90 s bei Assistenzübungen, 60–90 s zwischen Supersätzen."
+    },
+    {
+      "title": "Deload-Woche",
+      "text": "Alle 4–5 Wochen das Volumen bei Kraft und Ausdauer um 40–50 % senken (bei 2–3 Arbeitssätzen je 1 Satz streichen, Samstag-HIIT weglassen). Vereinstechnik locker weiterführen."
+    },
+    {
+      "title": "Notbremse bei Überlastung",
+      "text": "Sind die Beine zwei Freitage hintereinander beim Sparring bleiern oder steigt der morgendliche Ruhepuls dauerhaft um 5–7 bpm, zuerst das Leg-Extension/Leg-Curl-Superset (Mo) und die Donnerstags-Sprints streichen – niemals den Schlaf (8–9 h) oder die schweren Grundübungen."
+    }
+  ]
 }
