@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "defaults": {
+    "startWeightKg": 78.0,
+    "goalWeightKg": 74.0,
+    "targetLossMinKgPerWeek": 0.4,
+    "targetLossMaxKgPerWeek": 0.6,
+    "mealReminderLeadMinutes": 10,
+    "trainingReminderLeadMinutes": 45,
+    "maintenanceExtraKcal": 350,
+    "rules": {
+      "slowLossThresholdKg": 0.3,
+      "fastLossThresholdKg": 0.8,
+      "decreaseKcal": 150,
+      "decreaseDayTypes": ["NORMAL", "REST"],
+      "increaseKcal": 200,
+      "compareWeeks": 2
+    }
+  },
+  "dayTypes": {
+    "DOUBLE":   { "label": "Doppeltag", "carbsPerKg": 5.5, "proteinPerKg": 2.2, "fatPerKg": 0.8 },
+    "SPARRING": { "label": "Sparring",  "carbsPerKg": 5.0, "proteinPerKg": 2.2, "fatPerKg": 0.8 },
+    "NORMAL":   { "label": "Normal",    "carbsPerKg": 4.5, "proteinPerKg": 2.2, "fatPerKg": 0.8 },
+    "REST":     { "label": "Ruhe",      "carbsPerKg": 3.0, "proteinPerKg": 2.2, "fatPerKg": 0.9 }
+  },
+  "days": [
+    {
+      "day": "MONDAY",
+      "type": "DOUBLE",
+      "school": { "start": "08:50", "end": "13:25" },
+      "sessions": [
+        {
+          "id": "mo-kraft-a",
+          "start": "07:00",
+          "end": "07:50",
+          "title": "Kraft A",
+          "content": "Box Jump 3×4, Front Squat 3×4 (2 Wdh. Reserve), DB-Bankdrücken 3×6, Bulgarian Split Squat 3×6/Seite, Ab-Wheel 3×10, Nacken-Isometrie"
+        },
+        { "id": "mo-mt", "start": "18:00", "end": "19:30", "title": "Muay Thai / K1", "content": "Verein" }
+      ],
+      "meals": [
+        { "id": "mo-1", "time": "06:15", "content": "Banane mit Honig und 500 ml Wasser mit Salz" },
+        { "id": "mo-2", "time": "08:15", "content": "Nach Kraft A: Skyr oder Shake plus 70 g Kohlenhydrate" },
+        { "id": "mo-3", "time": "13:45", "content": "Reis und mageres Fleisch" },
+        { "id": "mo-4", "time": "16:00", "content": "Reiswaffeln mit Honig und Skyr" },
+        { "id": "mo-5", "time": "20:00", "content": "Reis oder Kartoffeln, Huhn oder Thunfisch, wenig Öl" }
+      ]
+    },
+    {
+      "day": "TUESDAY",
+      "type": "NORMAL",
+      "school": { "start": "08:50", "end": "14:15" },
+      "sessions": [
+        { "id": "di-mt", "start": "19:30", "end": "21:00", "title": "Muay Thai / K1", "content": "Verein, danach Bett spätestens 22:45" }
+      ],
+      "meals": [
+        { "id": "di-1", "time": "14:30", "content": "Großes fettarmes Mittagessen" },
+        { "id": "di-2", "time": "16:45", "content": "Reis mit Huhn" },
+        { "id": "di-3", "time": "18:45", "content": "Kleiner Kohlenhydrat-Snack" },
+        { "id": "di-4", "time": "21:15", "content": "Skyr oder Magertopfen mit Honig und Reiswaffeln" }
+      ]
+    },
+    {
+      "day": "WEDNESDAY",
+      "type": "NORMAL",
+      "school": { "start": "08:00", "end": "15:15" },
+      "sessions": [
+        { "id": "mi-mt", "start": "18:00", "end": "19:30", "title": "Muay Thai / K1", "content": "Verein, Licht aus 22:00" }
+      ],
+      "meals": [
+        { "id": "mi-1", "time": "06:30", "content": "Frühstück" },
+        { "id": "mi-2", "timeLabel": "Pause", "content": "Wrap oder Hüttenkäse" },
+        { "id": "mi-3", "time": "15:45", "content": "Buchweizen oder Kartoffeln mit Huhn" },
+        { "id": "mi-4", "time": "17:15", "content": "Banane oder Reiswaffeln" },
+        { "id": "mi-5", "time": "20:00", "content": "Kartoffeln oder Reis mit magerem Protein plus Eier oder Lachs" }
+      ]
+    },
+    {
+      "day": "THURSDAY",
+      "type": "NORMAL",
+      "school": { "start": "08:00", "end": "14:00" },
+      "sessions": [
+        {
+          "id": "do-kraft-b",
+          "start": "15:30",
+          "end": "16:30",
+          "title": "Kraft B",
+          "content": "Med-Ball-Rotation 2×5/Seite, leichtes RDL 3×6 (3 Wdh. Reserve), gewichtete neutrale Klimmzüge 4×5, Landmine Press 3×6, Face Pulls 2×12–15, Copenhagen Plank 2×20 s/Seite, Nacken"
+        }
+      ],
+      "meals": [
+        { "id": "do-1", "time": "14:15", "content": "Reis mit Huhn" },
+        { "id": "do-2", "time": "16:40", "content": "Topfen oder Casein mit Reiswaffeln" },
+        { "id": "do-3", "time": "19:30", "content": "Reis oder Kartoffeln mit magerem Fleisch" }
+      ]
+    },
+    {
+      "day": "FRIDAY",
+      "type": "SPARRING",
+      "school": { "start": "08:00", "end": "15:15" },
+      "sessions": [
+        { "id": "fr-sparring", "start": "17:30", "end": "18:30", "title": "Sparring", "content": "Verein, kein Heben, kein Laufen" }
+      ],
+      "meals": [
+        { "id": "fr-1", "time": "15:30", "content": "Reis oder Grieß mit Skyr, fettarm und ballaststoffarm" },
+        { "id": "fr-2", "time": "19:15", "content": "Großes Abendessen" }
+      ]
+    },
+    {
+      "day": "SATURDAY",
+      "type": "DOUBLE",
+      "sessions": [
+        { "id": "sa-box", "start": "09:30", "end": "10:30", "title": "Boxen", "content": "Verein" },
+        {
+          "id": "sa-power",
+          "start": "14:30",
+          "end": "15:10",
+          "title": "Power und Sprints",
+          "content": "Sprünge 3×5, Med-Ball-Slams 3×6, 6×8 s Sprints (90 s Pause), Nacken"
+        }
+      ],
+      "meals": [
+        { "id": "sa-1", "time": "08:00", "content": "Grießbrei oder Hafer mit Protein" },
+        { "id": "sa-2", "time": "11:15", "content": "Reis oder Kartoffeln mit Huhn oder Fisch" },
+        { "id": "sa-3", "time": "15:30", "content": "Shake oder Skyr mit Banane" },
+        { "id": "sa-4", "time": "19:00", "content": "Reichhaltiges, fettarmes Abendessen" }
+      ]
+    },
+    {
+      "day": "SUNDAY",
+      "type": "REST",
+      "sessions": [
+        { "id": "so-ruhe", "title": "Ruhetag", "content": "Optional 30 min locker gehen oder Zone 2, 10 min Mobility", "training": false }
+      ],
+      "meals": [
+        { "id": "so-1", "timeLabel": "ganztags", "content": "Sättigung durch Kartoffeln, Buchweizen, Magertopfen, Hüttenkäse; ganze Eier oder Lachs als Fettquelle" }
+      ]
+    }
+  ],
+  "reminders": [
+    { "id": "di-bett", "day": "TUESDAY", "time": "22:15", "title": "Bett vorbereiten", "text": "Bett spätestens 22:45." },
+    { "id": "mi-licht", "day": "WEDNESDAY", "time": "21:45", "title": "Licht aus", "text": "Licht aus um 22:00." }
+  ],
+  "weighIn": {
+    "defaultTime": "06:15",
+    "overrides": { "MONDAY": "06:00" }
+  },
+  "checkIn": { "day": "SUNDAY", "time": "18:00" }
+}

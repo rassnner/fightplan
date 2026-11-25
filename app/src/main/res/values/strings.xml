@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FightPlan</string>
+    <string name="widget_name">FightPlan Heute</string>
+    <string name="widget_description">Tagestyp, nächster Termin, nächstes Essen und Makros</string>
+</resources>

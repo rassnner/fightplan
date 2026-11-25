@@ -1,0 +1,210 @@
+package at.fightplan.ui
+
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import at.fightplan.domain.AlarmDef
+import at.fightplan.domain.AlarmKind
+import at.fightplan.domain.AlarmPlanner
+import at.fightplan.domain.Format
+import at.fightplan.domain.MacroCalculator
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+private val HHMM = DateTimeFormatter.ofPattern("HH:mm")
+
+@Composable
+fun SettingsScreen(s: AppState, vm: MainViewModel, onOpenPermissions: () -> Unit) {
+    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        uri?.let(vm::export)
+    }
+    var importConfirm by remember { mutableStateOf(false) }
+    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let(vm::import)
+    }
+
+    Column(
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text("Einstellungen", style = MaterialTheme.typography.headlineSmall)
+
+        WeightSettings(s, vm)
+
+        SectionCard {
+            Text("Makro-Anpassungen", style = MaterialTheme.typography.titleMedium)
+            if (s.settings.kcalOffsets.values.all { it == 0 }) {
+                Text("Keine – es gelten die Faktoren aus dem Plan.")
+            } else {
+                s.plan.dayTypes.forEach { (key, type) ->
+                    val off = s.settings.kcalOffsets[key] ?: 0
+                    if (off != 0) Text("${type.label}: %+d kcal".format(off))
+                }
+            }
+            val avg = MacroCalculator.weeklyAverageKcal(s.plan, s.targets.basisWeightKg, s.settings.kcalOffsets)
+            Text("Wochenschnitt aktuell: ${avg.toInt()} kcal/Tag", style = MaterialTheme.typography.bodySmall)
+            if (s.settings.kcalOffsets.isNotEmpty() || s.settings.maintenanceApplied) {
+                OutlinedButton(onClick = {
+                    vm.updateSettings { it.copy(kcalOffsets = emptyMap(), maintenanceApplied = false, lastAdjustmentDecisionEpochDay = null) }
+                }) { Text("Zurücksetzen") }
+            }
+        }
+
+        SectionCard {
+            Text("Berechtigungen", style = MaterialTheme.typography.titleMedium)
+            Text("Benachrichtigungen, exakte Alarme, Akku-Optimierung")
+            Button(onClick = onOpenPermissions) { Text("Prüfen") }
+        }
+
+        SectionCard {
+            Text("Daten", style = MaterialTheme.typography.titleMedium)
+            Text("Sicherung als JSON (Gewicht, Taille, Check-ins, Häkchen, Einstellungen).")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { exportLauncher.launch("fightplan-${LocalDate.now()}.json") }) { Text("Export") }
+                OutlinedButton(onClick = { importConfirm = true }) { Text("Import") }
+            }
+        }
+
+        AlarmSettings(s, vm)
+    }
+
+    if (importConfirm) {
+        AlertDialog(
+            onDismissRequest = { importConfirm = false },
+            title = { Text("Daten importieren?") },
+            text = { Text("Alle aktuellen Daten werden durch den Inhalt der Datei ersetzt.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    importConfirm = false
+                    importLauncher.launch(arrayOf("application/json", "text/plain", "application/octet-stream"))
+                }) { Text("Datei wählen") }
+            },
+            dismissButton = { TextButton(onClick = { importConfirm = false }) { Text("Abbrechen") } },
+        )
+    }
+}
+
+@Composable
+private fun WeightSettings(s: AppState, vm: MainViewModel) {
+    var start by rememberSaveable(s.settings.startWeightKg) { mutableStateOf(Format.num(s.settings.startWeight(s.plan))) }
+    var goal by rememberSaveable(s.settings.goalWeightKg) { mutableStateOf(Format.num(s.settings.goalWeight(s.plan))) }
+    var error by remember { mutableStateOf(false) }
+    SectionCard {
+        Text("Gewicht", style = MaterialTheme.typography.titleMedium)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            DecimalField(start, { start = it; error = false }, "Startgewicht", Modifier.weight(1f), suffix = "kg")
+            DecimalField(goal, { goal = it; error = false }, "Zielgewicht", Modifier.weight(1f), suffix = "kg")
+        }
+        if (error) Text("Bitte gültige Werte eingeben.", color = MaterialTheme.colorScheme.error)
+        Button(onClick = {
+            val st = Format.parseDecimal(start)
+            val gl = Format.parseDecimal(goal)
+            if (st == null || gl == null || st !in 30.0..200.0 || gl !in 30.0..200.0) {
+                error = true
+            } else {
+                vm.updateSettings { it.copy(startWeightKg = st, goalWeightKg = gl, maintenanceApplied = false) }
+            }
+        }) { Text("Speichern") }
+        Text(
+            "Das Startgewicht wird für die Makros genutzt, solange noch keine Messungen da sind.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun AlarmSettings(s: AppState, vm: MainViewModel) {
+    val alarms = remember(s.plan) { AlarmPlanner.buildAlarms(s.plan) }
+    var editing by remember { mutableStateOf<AlarmDef?>(null) }
+    SectionCard {
+        Text("Alarme", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Tippe auf eine Zeit, um sie zu ändern. Schalter = an/aus.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        DayOfWeek.entries.forEach { day ->
+            HorizontalDivider()
+            Text(Format.dayLong(day), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 4.dp))
+            alarms.filter { it.day == day }.sortedBy { it.effectiveTime(s.settings) }.forEach { def ->
+                val time = def.effectiveTime(s.settings)
+                val changed = def.id in s.settings.alarmTimeOverrides
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        time.format(HHMM),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (changed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.width(64.dp).clickable { editing = def },
+                    )
+                    Column(Modifier.weight(1f).clickable { editing = def }) {
+                        Text(kindLabel(def.kind), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            if (def.kind == AlarmKind.MEAL) def.text else def.title + if (def.kind == AlarmKind.TRAINING) " (${def.text})" else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    Switch(
+                        checked = def.isEnabled(s.settings),
+                        onCheckedChange = { on ->
+                            vm.updateSettings {
+                                it.copy(disabledAlarms = if (on) it.disabledAlarms - def.id else it.disabledAlarms + def.id)
+                            }
+                        },
+                    )
+                }
+            }
+        }
+    }
+    editing?.let { def ->
+        TimePickDialog(
+            title = "${kindLabel(def.kind)} · ${Format.dayLong(def.day)}",
+            initial = def.effectiveTime(s.settings),
+            onDismiss = { editing = null },
+        ) { t ->
+            vm.updateSettings {
+                val overrides = if (t == def.defaultTime) it.alarmTimeOverrides - def.id
+                else it.alarmTimeOverrides + (def.id to t.format(HHMM))
+                it.copy(alarmTimeOverrides = overrides)
+            }
+        }
+    }
+}
+
+private fun kindLabel(k: AlarmKind) = when (k) {
+    AlarmKind.WEIGH_IN -> "Wiegen"
+    AlarmKind.MEAL -> "Essen (10 min vorher)"
+    AlarmKind.TRAINING -> "Training (45 min vorher)"
+    AlarmKind.FIXED -> "Schlaf"
+    AlarmKind.CHECK_IN -> "Check-in"
+}
